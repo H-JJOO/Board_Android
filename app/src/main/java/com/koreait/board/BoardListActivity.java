@@ -36,13 +36,19 @@ public class BoardListActivity extends AppCompatActivity {
 
         rvList.setAdapter(adapter);
 
-        getBoardList();
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getBoardList();
+    }
+
     //글쓰기 Activity 로 이동
-    public void clkWrite(View v) {
-        Intent intent = new Intent(this, BoardWriteActivity.class);
-        startActivity(intent);
+    public void clkWrite(View v) {//View 는 화면단에 나오는(Layout, Button,...) 모든 것들의 부모 클래스
+        Intent intent = new Intent(this, BoardWriteActivity.class);//this -> BoardWriteActivity(목적지 정보)
+        startActivity(intent);//화면 이동
     }
 
     //통신
@@ -62,7 +68,7 @@ public class BoardListActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
 
                     for (BoardVO vo : result) {
-                        Log.i("myLog", vo.getTitle());
+//                        Log.i("myLog", vo.getTitle());
                     }
                 } else {
                     Log.e("myLog", "통신 오류 : " + res.code());
@@ -101,6 +107,17 @@ class BoardListAdapter extends RecyclerView.Adapter<BoardListAdapter.MyViewHolde
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         BoardVO vo = list.get(position);
         holder.setItem(vo);
+        //list에 접근해야함 (리스트에 있는 자료를 써야하기때문에)
+        holder.itemView.setOnClickListener(new View.OnClickListener() {//list 에 접근 용의, 이름 없이 객체화, 각 줄 마다 이벤트 걸었다
+            @Override
+            public void onClick(View view) {//적어준걸 클릭하면 호출될거임
+                Log.i("myLog", "iboard : " + vo.getIboard());
+
+                Intent intent = new Intent(view.getContext(), BoardDetailActivity.class);//이사짐 차를 BoardDetailActivity.class 로 이동, 디테일 화면 띄우기
+                intent.putExtra("iboard", vo.getIboard());//intent 값 넣기
+                view.getContext().startActivity(intent);//포함되어있는 Activity의 주소값 얻을수 있음
+            }
+        });
     }
 
     @Override
@@ -115,7 +132,7 @@ class BoardListAdapter extends RecyclerView.Adapter<BoardListAdapter.MyViewHolde
         private TextView tvRdt;
 
         public MyViewHolder(View v) {
-            super(v);
+            super(v);//item_board.xml 주소값
             tvIboard = v.findViewById(R.id.tvIboard);
             tvTitle = v.findViewById(R.id.tvTitle);
             tvWriter = v.findViewById(R.id.tvWriter);

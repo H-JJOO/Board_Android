@@ -21,35 +21,39 @@ public class BoardWriteActivity extends AppCompatActivity {
     private BoardService service;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {//딱 한번만 호출
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board_write);
 
-        etTitle = findViewById(R.id.etTitle);
-        etCtnt = findViewById(R.id.etCtnt);
-        etWriter = findViewById(R.id.etWriter);
+        etTitle = findViewById(R.id.etTitle);//xml 연결
+        etCtnt = findViewById(R.id.etCtnt);//연결
+        etWriter = findViewById(R.id.etWriter);//연결
 
         Retrofit retrofit = RetroFitObj.getInstance();//주소값 받아오기
         service = retrofit.create(BoardService.class);
 
     }
 
-    public void clkReg(View v) {
-        String title = etTitle.getText().toString();
-        String ctnt = etCtnt.getText().toString();
-        String writer = etWriter.getText().toString();
 
-        BoardVO data = new BoardVO();
-        data.setTitle(title);
-        data.setCtnt(ctnt);
-        data.setWriter(writer);
+
+    public void clkReg(View v) {
+        String title = etTitle.getText().toString();//적힌 값을 문자열로 정리
+        String ctnt = etCtnt.getText().toString();//정리
+        String writer = etWriter.getText().toString();//정리
+
+        BoardVO data = new BoardVO();//정리된거 한 그릇에 담기(Json 으로 변경하기 편해서)
+        data.setTitle(title);//담기
+        data.setCtnt(ctnt);//담기
+        data.setWriter(writer);//담기
 
         Call<Void> call = service.insBoard(data);
-        call.enqueue(new Callback<Void>() {
+        //비동기
+        call.enqueue(new Callback<Void>() {//enqueue 신호 쏴주는 역할
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.i("myLog", "통신 성공");
+                    finish();
                 } else {
                     Log.i("myLog", "통신 오류");
                 }
